@@ -23,6 +23,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# A newer push supersedes the run already in flight for this ref.
+# These matrices include macOS, billed at ~10x the Linux rate, so an
+# abandoned run is the most expensive kind of wasted minute here.
+# Never cancel on main: those runs are the record that main is green.
+concurrency:
+  group: wrap-native-e2e-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 permissions:
   contents: read
 
